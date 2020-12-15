@@ -18,7 +18,7 @@ class Block {
         const timeStamp = Date.now();
         const lastHash = lastBlock.hash;
         
-        return  new this({timeStamp:timeStamp, lastHash:lastBlock.hash, data, hash: cryptoHash(timeStamp, lastHash, data)});
+        return  new this({timeStamp: timeStamp, lastHash:lastBlock.hash, data, hash: cryptoHash(timeStamp, lastHash, data)});
     }
 
 
