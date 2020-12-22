@@ -11,14 +11,15 @@ class Blockchain {
     }
 
     static isValidChain(chain){
+        //Checks values of chains genesis block and compares
         if (JSON.stringify(chain[0]) !== JSON.stringify(Block.genesis())) return false;
 
-
+        //Checks for data changes in each block
         for (let i = 1; i < chain.length; i ++){
             const actualLastHash = chain[i-1].hash;
-            const {timeStamp, lastHash, hash, data } = chain[i];
+            const {timeStamp, lastHash, hash, data, nonce, difficulty} = chain[i];
             if (lastHash !== actualLastHash) return false;
-            const validatedHash = cryptoHash(timeStamp, lastHash, data);
+            const validatedHash = cryptoHash(timeStamp, lastHash, data, nonce, difficulty);
             if (hash !== validatedHash) return false;
 
         }
