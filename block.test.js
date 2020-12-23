@@ -1,16 +1,16 @@
 const Block = require("./block");
-const { GENESIS_DATA } = require("./config");
+const { GENESIS_DATA, MINE_RATE } = require("./config");
 const cryptoHash = require("./crypto-hash");
 
 describe ('Block',() => {
-    const timeStamp = 'a-date'
+    const timeStamp = 2000
     const lastHash = 'foo hash'
     const hash = 'bar-hash'
     const data = ["blockchain", "data"];
     const nonce = 1;
     const difficulty = 1;
     const block = new Block({timeStamp, lastHash, hash, data, nonce, difficulty});
-    
+
     it("has timestamp, lastHash, hash and data fields", () => {
         expect(block.lastHash).toEqual(lastHash);
         expect(block.hash).toEqual(hash);
@@ -67,6 +67,12 @@ describe ('Block',() => {
 
         it('Sets a hash with a leading number of zeros equal to the set difficulty', () =>{
             expect(minedBlock.hash.substring(0, minedBlock.difficulty)).toEqual('0'.repeat(minedBlock.difficulty));
+
+        });
+
+        it('Has a lower limit of 1', () =>{
+            block.difficulty = -1;
+            expect(Block.adjustDifficulty({originalBlock: block})).toEqual(1);
 
         });
 
