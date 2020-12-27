@@ -26,6 +26,7 @@ class Block {
             //keep generating hashes until the desired difficulty is met
             nonce ++;
             timeStamp = Date.now();
+            //adjust difficulty based on previous block
             difficulty = Block.adjustDifficulty({originalBlock:lastBlock,timeStamp})
             hash = cryptoHash(timeStamp, lastHash, data, nonce, difficulty);
         } while (hash.substring(0, difficulty) !== '0'.repeat(difficulty));
