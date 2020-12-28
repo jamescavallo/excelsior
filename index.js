@@ -2,6 +2,10 @@ const express = require('express');
 const Blockchain = require('./blockchain');
 const bodyParser = require('body-parser');
 const PubSub = require('./pubsub');
+const request = require('request');
+
+const DEFAULT_PORT = 3000;
+const ROOT_NODE_ADDRESS = 'http://localhost:' + DEFAULT_PORT;
 
 //Creates a new express webapp
 const app = express();
@@ -17,9 +21,9 @@ const pubsub = new PubSub({blockchain});
 
 app.use(bodyParser.json());
 
+
+
 //******API*******
-
-
 //callback fires in response to a request displaying a json of the current chain at the localhost
 app.get('/api/blocks', (req, res) => {
     //reply to an api request with the 'response' of res as the chain in json form
@@ -40,9 +44,20 @@ app.post('/api/mine', (req, res) =>{
 
 });
 
+const syncChains = () => {
+    request({url: ROOT_NODE_ADDRESS + '/api/blocks'}, (error, response, body) => {
+        if (!error && response.statusCode  === 200){
+            const root = JSON.parse(body);
+            blockchain.replaceChain(root);
+            console.log('replace chain on a sync with' + root);
+        }else{
+            console.log('There was an error with response: ' + response.statusCode);
+        }
 
+    });
+}
 //Starts the app and listens to api requests on port 3000
-const DEFAULT_PORT = 3000;
+
 let PEER_PORT;
 
 //runs with dev-peer command set in package and changes port
@@ -55,5 +70,11 @@ if (process.env.GENERATE_PEER_PORT === 'true'){
 const PORT = PEER_PORT || DEFAULT_PORT;
 app.listen(PORT, () =>{
     console.log('listening at localhost:' + PORT);
+
+    //prevents from sync with itself
+    if (PORT != DEFAULT_PORT){
+        syncChains();
+    }
+
 
 });

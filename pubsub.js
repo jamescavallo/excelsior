@@ -45,7 +45,11 @@ class PubSub{
 
     publish({ channel, message }){
         //publishes a message to a channel
-        this.publisher.publish(channel, message);
+        this.subscriber.unsubscribe(channel, () =>{
+            this.publisher.publish(channel, message, () => {
+                this.subscriber.subscribe(channel);
+            });
+        });
     }
 
 
