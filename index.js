@@ -1,7 +1,7 @@
 const express = require('express');
 const Blockchain = require('./blockchain');
 const bodyParser = require('body-parser');
-const PubSub = require('./pubsub');
+const PubSub = require('./app/pubsub');
 const request = require('request');
 
 const DEFAULT_PORT = 3000;
