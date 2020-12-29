@@ -15,7 +15,10 @@ class Transaction{
 
     createOutputMap({senderWallet, recipient, amount}){
         const outputMap = {};
+        //amount mapped to recipient
         outputMap[recipient] = amount;
+
+        //new balance after transaction in sender wallet
         outputMap[senderWallet.publicKey] = senderWallet.balance - amount;
 
         return outputMap;
@@ -23,9 +26,13 @@ class Transaction{
 
     createInput({senderWallet, outputMap}){
         return {
+            //timestamp of transactiom
             timestamp: Date.now(),
+            //amount
             amount: senderWallet.balance,
+            //sender wallet public key
             address: senderWallet.publicKey,
+            //signing the output data
             signature: senderWallet.sign(outputMap)
         };
     }
