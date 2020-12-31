@@ -1,4 +1,4 @@
-# Project Title
+# Excelsior Decentralized Blockchain Network
 
 One Paragraph of project description goes here
 
