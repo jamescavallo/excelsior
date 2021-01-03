@@ -8,10 +8,52 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-What things you need to install the software and how to install them
+Project dependencies to run the developer environment
 
+
+Install Node.js
 ```
-Give examples
+brew install node
+```
+
+Install Express
+```
+node i express
+```
+
+Install Cross-ev
+```
+node i cross-ev
+```
+
+Install Hex-to-binary
+```
+node i hex-to-binary
+```
+
+Install Jest
+```
+node i jest
+```
+
+Install Nodemon
+```
+node i nodemon
+```
+
+Install Redis
+```
+node i redis
+```
+
+Install UUID
+```
+node i uuid
+```
+
+Install Request
+```
+node i request
 ```
 
 ### Installing
