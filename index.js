@@ -21,8 +21,8 @@ const transactionPool = new TransactionPool();
 //Create an instance of Wallet
 const wallet = new Wallet();
 
-//Create pubsub object with the current blockchain 
-const pubsub = new PubSub({blockchain});
+//Create pubsub object with the current blockchain and created transaction pool
+const pubsub = new PubSub({blockchain, transactionPool});
 
 //setTimeout(() => pubsub.broadcastChain(), 1000);
 
@@ -52,31 +52,47 @@ app.post('/api/mine', (req, res) =>{
 
 });
 
+
+//submit a new transaction with this request
 app.post('/api/transact', (req, res) =>{
     //get amount and recipient from request body
     const {amount, recipient} = req.body;
 
-    let transaction;
+    let transaction = transactionPool.existingTransaction({inputAddress: wallet.publicKey});
 
     try {
-        //create a new transaction from the local wallet with this data
-        transaction = wallet.createTransaction({recipient, amount});
+        if (transaction){
+            //If this transaction is already in the pool update it
+            transaction.update({senderWallet: wallet, recipient: recipient, amount });
+        }else{
+            //create a new transaction from the local wallet with this data
+            transaction = wallet.createTransaction({recipient, amount});
+        }
     } catch(error){
         //if transaction cannot be created throw an error and respond to the request with the json of it
         return res.status(400).json({type: 'error', message: error.message});
     }
 
-    //send this transaction to the pool
+    //send this transaction to the LOCAL pool
     transactionPool.setTransaction(transaction);
 
-    console.log('transactionPool: ' + transactionPool);
+    //Broadcast the new transaction to the entire network
+    pubsub.broadcastTransaction(transaction);
 
     //respond with a json of the transaction
     res.json({type: 'sucess', transaction});
-})
+});
+
+//api get request to show the transaction map
+app.get('/api/transaction-pool-map', (req, res) =>{
+    res.json(transactionPool.transactionMap);
+
+});
 
 
-const syncChains = () => {
+
+
+const syncWithRootState = () => {
     request({url: ROOT_NODE_ADDRESS + '/api/blocks'}, (error, response, body) => {
         if (!error && response.statusCode  === 200){
             const root = JSON.parse(body);
@@ -87,7 +103,23 @@ const syncChains = () => {
         }
 
     });
+
+
+    //makes an http request to the root node address's get method and then replaces the local transaction pool with the root's
+    request({url: ROOT_NODE_ADDRESS + '/api/transaction-pool-map'}, (error, response, body) =>{
+        if (!error && response.statusCode === 200){
+            const rootTransactionPoolMap = JSON.parse(body);
+
+            console.log('Replacing transaction on a sync with' + rootTransactionPoolMap);
+            transactionPool.setMap(rootTransactionPoolMap)
+
+
+
+        }
+    });
 }
+
+
 //Starts the app and listens to api requests on port 3000
 
 let PEER_PORT;
@@ -105,7 +137,8 @@ app.listen(PORT, () =>{
 
     //prevents from sync with itself
     if (PORT != DEFAULT_PORT){
-        syncChains();
+        //all chains sync with root 
+        syncWithRootState();
     }
 
 

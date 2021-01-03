@@ -9,6 +9,15 @@ class TransactionPool {
 
     }
 
+    setMap(transactionMap){
+        this.transactionMap = transactionMap;
+    }
+
+    existingTransaction({inputAddress}){
+        const transactions = Object.values(this.transactionMap);
+        return transactions.find(transaction => transaction.input.address === inputAddress)
+    }
+
 }
 
 module.exports = TransactionPool;
