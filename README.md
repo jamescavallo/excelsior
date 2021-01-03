@@ -1,6 +1,6 @@
 # Excelsior Decentralized Blockchain Network
 
-A modern blockchain network written in pure javascript. Excelsior utilizes SHA-256 binary hashing to interlink block objects, creating a secure and instant way to transfer information across a multitude of borders. The cryptocurrency aspect of the project is still under work; the end goal is to implement this technology in an applicable field and turn Excelsior into a sucessful startup! 
+A modern blockchain network written in pure javascript. Excelsior utilizes SHA-256 binary hashing to interlink block objects, creating a secure and instant way to transfer information across a multitude of borders. The cryptocurrency aspect of the project is still under work; the end goal is to implement this technology in an applicable field and turn Excelsior into a sucessful startup! Join us today.
 
 ## Getting Started
 
