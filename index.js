@@ -3,6 +3,8 @@ const Blockchain = require('./blockchain');
 const bodyParser = require('body-parser');
 const PubSub = require('./app/pubsub');
 const request = require('request');
+const TransactionPool = require('./wallet/transaction-pool');
+const Wallet = require('./wallet');
 
 const DEFAULT_PORT = 3000;
 const ROOT_NODE_ADDRESS = 'http://localhost:' + DEFAULT_PORT;
@@ -12,6 +14,12 @@ const app = express();
 
 //Creates a new blockchain
 const blockchain = new Blockchain();
+
+//Create an instance of the transaction pool
+const transactionPool = new TransactionPool();
+
+//Create an instance of Wallet
+const wallet = new Wallet();
 
 //Create pubsub object with the current blockchain 
 const pubsub = new PubSub({blockchain});
@@ -43,6 +51,30 @@ app.post('/api/mine', (req, res) =>{
     res.redirect('/api/blocks');
 
 });
+
+app.post('/api/transact', (req, res) =>{
+    //get amount and recipient from request body
+    const {amount, recipient} = req.body;
+
+    let transaction;
+
+    try {
+        //create a new transaction from the local wallet with this data
+        transaction = wallet.createTransaction({recipient, amount});
+    } catch(error){
+        //if transaction cannot be created throw an error and respond to the request with the json of it
+        return res.status(400).json({type: 'error', message: error.message});
+    }
+
+    //send this transaction to the pool
+    transactionPool.setTransaction(transaction);
+
+    console.log('transactionPool: ' + transactionPool);
+
+    //respond with a json of the transaction
+    res.json({type: 'sucess', transaction});
+})
+
 
 const syncChains = () => {
     request({url: ROOT_NODE_ADDRESS + '/api/blocks'}, (error, response, body) => {
