@@ -5,6 +5,7 @@ const PubSub = require('./app/pubsub');
 const request = require('request');
 const TransactionPool = require('./wallet/transaction-pool');
 const Wallet = require('./wallet');
+const TransactionMiner = require('./app/transaction-miner');
 
 const DEFAULT_PORT = 3000;
 const ROOT_NODE_ADDRESS = 'http://localhost:' + DEFAULT_PORT;
@@ -24,7 +25,8 @@ const wallet = new Wallet();
 //Create pubsub object with the current blockchain and created transaction pool
 const pubsub = new PubSub({blockchain, transactionPool});
 
-//setTimeout(() => pubsub.broadcastChain(), 1000);
+//create new transaction miner
+const transactionMiner = new TransactionMiner({blockchain: blockchain,transactionPool, wallet: wallet, pubsub});
 
 
 app.use(bodyParser.json());
@@ -87,6 +89,11 @@ app.post('/api/transact', (req, res) =>{
 app.get('/api/transaction-pool-map', (req, res) =>{
     res.json(transactionPool.transactionMap);
 
+});
+
+app.get('/api/mine-transactions', (req, res) =>{
+    transactionMiner.mineTransactions();
+    res.redirect('/api/blocks');
 });
 
 
