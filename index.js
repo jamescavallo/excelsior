@@ -68,7 +68,7 @@ app.post('/api/transact', (req, res) =>{
             transaction.update({senderWallet: wallet, recipient: recipient, amount });
         }else{
             //create a new transaction from the local wallet with this data
-            transaction = wallet.createTransaction({recipient, amount});
+            transaction = wallet.createTransaction({recipient, amount, chain: blockchain.chain});
         }
     } catch(error){
         //if transaction cannot be created throw an error and respond to the request with the json of it

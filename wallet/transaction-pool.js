@@ -35,6 +35,9 @@ class TransactionPool {
         for (let i=0; i< chain.length; i++){
             const block = chain[i]
 
+            //clear relevant transactions if they are already in the blockchain so they cant be mined again
+            //this is called on a global scale to rid all pools of these transactions
+
             for (let transaction of block.data){
                 if (this.transactionMap[transaction.id]){
                     delete this.transactionMap[transaction.id];
