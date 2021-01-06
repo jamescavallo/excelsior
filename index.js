@@ -54,6 +54,11 @@ app.post('/api/mine', (req, res) =>{
 
 });
 
+app.get('/api/wallet-info', (req, res) =>{
+    //responds with the wallet address and current balance
+    res.json({address: wallet.publicKey, balance: Wallet.calculateBalance({chain: blockchain.chain, address: wallet.publicKey})});
+});
+
 
 //submit a new transaction with this request
 app.post('/api/transact', (req, res) =>{

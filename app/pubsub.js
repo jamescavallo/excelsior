@@ -34,8 +34,8 @@ class PubSub{
 
         switch(channel){
             case CHANNELS.BLOCKCHAIN:
-                //If the channel was a blockchain broadcast try and replace local chain
-                this.blockchain.replaceChain(parsedMessage, () =>{
+                //If the channel was a blockchain broadcast try and replace local chain and verify transactional data
+                this.blockchain.replaceChain(parsedMessage, true, () =>{
                     //when a new message comes in clear the pool of the new transactions
                     this.transactionPool.clearBlockchainTransactions({
                         chain: parsedMessage
