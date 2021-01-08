@@ -3,6 +3,7 @@ const Blockchain = require('./blockchain');
 const bodyParser = require('body-parser');
 const PubSub = require('./app/pubsub');
 const request = require('request');
+const path = require('path');
 const TransactionPool = require('./wallet/transaction-pool');
 const Wallet = require('./wallet');
 const TransactionMiner = require('./app/transaction-miner');
@@ -31,6 +32,8 @@ const transactionMiner = new TransactionMiner({blockchain: blockchain,transactio
 
 app.use(bodyParser.json());
 
+app.use(express.static(path.join(__dirname, 'client')));
+
 
 
 //******API*******
@@ -55,7 +58,7 @@ app.post('/api/mine', (req, res) =>{
 });
 
 app.get('/api/wallet-info', (req, res) =>{
-    //responds with the wallet address and current balance
+    //responds with the wallet address and calculates the balance off of the chain
     res.json({address: wallet.publicKey, balance: Wallet.calculateBalance({chain: blockchain.chain, address: wallet.publicKey})});
 });
 
@@ -101,6 +104,13 @@ app.get('/api/mine-transactions', (req, res) =>{
     res.redirect('/api/blocks');
 });
 
+//star means any endpoint not defined
+app.get('*', (req, res) =>{
+    //serves up the main html file on get request
+    res.sendFile(path.join(__dirname, 'client/index.html'));
+
+});
+
 
 
 
@@ -124,9 +134,6 @@ const syncWithRootState = () => {
 
             console.log('Replacing transaction on a sync with' + rootTransactionPoolMap);
             transactionPool.setMap(rootTransactionPoolMap)
-
-
-
         }
     });
 }
