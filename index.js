@@ -32,7 +32,7 @@ const transactionMiner = new TransactionMiner({blockchain: blockchain,transactio
 
 app.use(bodyParser.json());
 
-app.use(express.static(path.join(__dirname, 'client')));
+app.use(express.static(path.join(__dirname, 'client/dist')));
 
 
 
@@ -107,7 +107,7 @@ app.get('/api/mine-transactions', (req, res) =>{
 //star means any endpoint not defined
 app.get('*', (req, res) =>{
     //serves up the main html file on get request
-    res.sendFile(path.join(__dirname, 'client/index.html'));
+    res.sendFile(path.join(__dirname, 'client/dist/index.html'));
 
 });
 
